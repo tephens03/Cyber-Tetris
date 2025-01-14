@@ -27,23 +27,38 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
-
+        // Decide the time interval between every render within 1 second (1s = 1bil ns)
         double drawInterval = 1000000000 / FPS;
-        double delta = 0;
+        // Determine the occurent time (in the program) of the next render
+        double nextDrawTime = System.nanoTime() + drawInterval;
 
-        long lastTime = System.nanoTime();
-        long currentTime;
-        while (this.gameThread != null) {
+        // The rendering process will go on while the thread is still alive
+        while (gameThread.isAlive()) {
 
-            currentTime = System.nanoTime();
+            // Perform rendering and etc.
+            update();
+            repaint();
+            System.err.println("painted");
 
-            delta += (currentTime - lastTime) / drawInterval;
+            try {
+                // Find the remaining time after rendering, as the program may have free time
+                // until the next render. (1m ns = 1 milisec)
 
-            if (delta >= 1) {
-                update();
-                repaint();
-                delta--;
+                long remainingTime = (long) ((nextDrawTime - System.nanoTime()) / 10000000);
+
+                if (remainingTime > 0) {
+                    // Sleep/stop the thread until the next render happen
+                    Thread.sleep(remainingTime);
+                }
+
+            } catch (InterruptedException e) {
+                System.err.println(e);
+
             }
+
+            // Update next render time
+            nextDrawTime += drawInterval;
+
         }
     }
 
