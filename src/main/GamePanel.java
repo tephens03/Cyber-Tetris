@@ -11,6 +11,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public static final int WIDTH = 1280;
     public static final int HEIGHT = 720;
+    private int move_length = 10;
     final int FPS = 60;
     Thread gameThread;
 
@@ -49,6 +50,7 @@ public class GamePanel extends JPanel implements Runnable {
                 if (remainingTime > 0) {
                     // Sleep/stop the thread until the next render happen
                     Thread.sleep(remainingTime);
+                    move_length += 1;
                 }
 
             } catch (InterruptedException e) {
@@ -67,6 +69,8 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void paintComponent(Graphics g) {
+        int padding = 5;
+        int initialX = 100, initialY = 100, side = 100;
 
         super.paintComponent(g);
 
@@ -74,7 +78,9 @@ public class GamePanel extends JPanel implements Runnable {
 
         g2.setColor(Color.BLACK);
 
-        g2.fillRect(100, 100, 100, 100);
+        for (int i = 0; i < 3; i++) {
+            g2.fillRect(100 + (i * padding) + (i * initialX) + move_length, initialY + move_length, side, side);
+        }
 
         g2.dispose();
 
