@@ -1,24 +1,27 @@
 package main;
 
 import javax.swing.JPanel;
-
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 public class GamePanel extends JPanel implements Runnable {
 
-    public static final int WIDTH = 1280;
-    public static final int HEIGHT = 720;
-    private int move_length = 10;
+    protected static final int WIDTH = 1280;
+    protected static final int HEIGHT = 720;
     final int FPS = 60;
     Thread gameThread;
+    PlayManager pm;
+
+
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         this.setLayout(null);
         this.setOpaque(false); // Makes the panel fully transparent
+
+        pm = new PlayManager();
+
     }
 
     public void start() {
@@ -39,7 +42,7 @@ public class GamePanel extends JPanel implements Runnable {
             // Perform rendering and etc.
             update();
             repaint();
-            System.err.println("painted");
+            // System.err.println("painted");
 
             try {
                 // Find the remaining time after rendering, as the program may have free time
@@ -50,7 +53,7 @@ public class GamePanel extends JPanel implements Runnable {
                 if (remainingTime > 0) {
                     // Sleep/stop the thread until the next render happen
                     Thread.sleep(remainingTime);
-                    move_length += 1;
+                    // move_length += 1;
                 }
 
             } catch (InterruptedException e) {
@@ -69,21 +72,9 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void paintComponent(Graphics g) {
-        int padding = 5;
-        int initialX = 100, initialY = 100, side = 100;
-
         super.paintComponent(g);
-
         Graphics2D g2 = (Graphics2D) g;
-
-        g2.setColor(Color.BLACK);
-
-        for (int i = 0; i < 3; i++) {
-            g2.fillRect(100 + (i * padding) + (i * initialX) + move_length, initialY + move_length, side, side);
-        }
-
-        g2.dispose();
-
+        pm.draw(g2);
     }
 
 }
