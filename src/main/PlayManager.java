@@ -7,49 +7,90 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
 public class PlayManager {
-    private final int WIDTH = 360;
-    private final int HEIGHT = 600;
-    private static int left_x;
-    private static int right_x;
-    private static int top_y;
-    private static int botom_y;
+    private final int PLAYFIELD_WIDTH = 360;
+    private final int PLAYFIELD_HEIGHT = 600;
+    private final int HUD_SIDE = 200; // only 1 value because its a square
+
+    private static int playfield_x;
+    private static int playfield_y;
+    private static int hud_x;
+    private static int hud_y;
+
+    private static int gap;
+    // private static int botom_y;
 
     public PlayManager() {
         super();
-        left_x = (GamePanel.WIDTH / 2) - (WIDTH / 2);
-        right_x = left_x + WIDTH;
-        top_y = 50;
-        botom_y = top_y + HEIGHT;
+        // 1st term = middle point of the game, minus half of the playfield width allow
+        // the playfield to be perfectly center
+        playfield_x = (GamePanel.WIDTH / 2) - (PLAYFIELD_WIDTH / 2);
+        // Hard-code y of the playfield, leaving a distance of 50 pixel from the top
+        playfield_y = 50;
+
+        // HUD will be 100px, away thus starting point of playfield+its width + 100(px)
+        hud_x = playfield_x + PLAYFIELD_WIDTH + 100;
+        // HUD bottom side will align with playfield, thus its starting y will be
+        // HUD_SIDE(px) away from the playfield bottom
+        hud_y = playfield_y + PLAYFIELD_HEIGHT - HUD_SIDE;
+
+        // Distance between every Mino
+        gap = 6;
+
     }
 
     public void update() {
     }
 
     public void draw(Graphics2D g2) {
-        // Draw the game border
-        Color color = new Color(255, 255, 255, 140);
+        /*
+         * // Draw the game border
+         * Color color = new Color(255, 255, 255, 140);
+         * g2.setColor(color);
+         * g2.setStroke(new BasicStroke(6f)); // Set width of the border
+         * // Since border-width = 6, we push the coordinate 6px backward, we want to
+         * keep
+         * // the content inside the rect 600x360 so we include the double border width
+         * g2.drawRect(left_x - 6, top_y - 6, WIDTH + 12, HEIGHT + 12);
+         * int x = right_x + 100;
+         * int y = botom_y - 200;
+         * g2.drawRect(x, y, 200, 200); // Draw the score menu border
+         * 
+         * // Fill the gamezone background
+         * color = new Color(255, 255, 255, 100);
+         * g2.setColor(color);
+         * g2.fillRect(left_x, top_y, WIDTH, HEIGHT);
+         * // Fill the score menu background
+         * g2.fillRect(x + 6, y + 6, 200 - 12, 200 - 12);
+         * 
+         * // Render Text
+         * color = new Color(255, 255, 255);
+         * g2.setColor(color);
+         * g2.setFont(new Font("Ariel", Font.PLAIN, 30));
+         * g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+         * RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+         * g2.drawString("NEXT", x + 60, y + 60);
+         */
+
+        // Render playfield and HUD area
+        Color color = new Color(255, 255, 255, 100);
+        g2.setColor(color);
+        g2.fillRect(playfield_x, playfield_y, PLAYFIELD_WIDTH, PLAYFIELD_HEIGHT);
+        g2.fillRect(hud_x, hud_y, HUD_SIDE, HUD_SIDE);
+
+        // Render playfield and HUD border
+        color = new Color(0, 0, 0, 140);
         g2.setColor(color);
         g2.setStroke(new BasicStroke(6f)); // Set width of the border
-        // Since border-width = 6, we push the coordinate 6px backward, we want to keep
-        // the content inside the rect 600x360 so we include the double border width
-        g2.drawRect(left_x - 6, top_y - 6, WIDTH + 12, HEIGHT + 12);
-        int x = right_x + 100;
-        int y = botom_y - 200;
-        g2.drawRect(x, y, 200, 200); // Draw the score menu border
+        g2.drawRect(playfield_x - 3, playfield_y - 3, PLAYFIELD_WIDTH + 6, PLAYFIELD_HEIGHT + 6);
+        g2.drawRect(hud_x - 3, hud_y - 3, HUD_SIDE + 6, HUD_SIDE + 6);
 
-        // Fill the gamezone background
-        color = new Color(255, 255, 255, 100);
-        g2.setColor(color);
-        g2.fillRect(left_x, top_y, WIDTH, HEIGHT);
-        // Fill the score menu background
-        g2.fillRect(x + 6, y + 6, 200 - 12, 200 - 12);
-
-        // Render Text
+        // Render HUD text
         color = new Color(255, 255, 255);
         g2.setColor(color);
         g2.setFont(new Font("Ariel", Font.PLAIN, 30));
-        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2.drawString("NEXT", x + 60, y + 60);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g2.drawString("NEXT", hud_x + 60, hud_y + 60);
 
     }
 }
