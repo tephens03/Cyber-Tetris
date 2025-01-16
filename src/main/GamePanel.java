@@ -13,13 +13,11 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
     PlayManager pm;
 
-
-
     public GamePanel() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         this.setLayout(null);
         this.setOpaque(false); // Makes the panel fully transparent
-
+        this.setBounds(0, 0, 1280, 720);
         pm = new PlayManager();
 
     }
