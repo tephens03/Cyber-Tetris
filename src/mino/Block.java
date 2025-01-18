@@ -7,11 +7,10 @@ import java.awt.Rectangle;
 public class Block extends Rectangle {
 
     public int x, y;
-    public static int SIZE;
+    public static int SIZE=36;
     public Color color;
 
     public Block(Color color) {
-        super();
         this.color = color;
     }
 

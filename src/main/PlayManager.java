@@ -6,6 +6,10 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
+import mino.Block;
+import mino.Mino;
+import mino.Mino_L;
+
 public class PlayManager {
     private final int PLAYFIELD_WIDTH = 360;
     private final int PLAYFIELD_HEIGHT = 600;
@@ -16,7 +20,8 @@ public class PlayManager {
     private static int hud_x;
     private static int hud_y;
 
-    private static int gap;
+    private static Mino_L currentMino;
+
     // private static int botom_y;
 
     public PlayManager() {
@@ -33,8 +38,8 @@ public class PlayManager {
         // HUD_SIDE(px) away from the playfield bottom
         hud_y = playfield_y + PLAYFIELD_HEIGHT - HUD_SIDE;
 
-        // Distance between every Mino
-        gap = 6;
+        currentMino = new Mino_L();
+        currentMino.setXY(playfield_x, playfield_y);
 
     }
 
@@ -91,6 +96,8 @@ public class PlayManager {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.drawString("NEXT", hud_x + 60, hud_y + 60);
+
+        currentMino.draw(g2);
 
     }
 }
