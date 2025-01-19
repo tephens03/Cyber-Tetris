@@ -1,22 +1,21 @@
 package mino;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
+import main.PlayManager;
+
 public class Block extends Rectangle {
+    // TODO: The game window will be calculated responsively later
+
+    public static int MARGIN = 2;
+    public static int SIZE = PlayManager.PLAYFIELD_WIDTH / 10;
 
     public int x, y;
-    public static int SIZE=36;
     public Color color;
 
     public Block(Color color) {
         this.color = color;
-    }
-
-    public void draw(Graphics2D g2) {
-        g2.setColor(color);
-        g2.fillRect(x, y, SIZE, SIZE);
     }
 
 }

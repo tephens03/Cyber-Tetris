@@ -6,12 +6,13 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 public class GamePanel extends JPanel implements Runnable {
+    // TODO: The game window will be calculated responsively later
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 720;
+    public final int FPS = 10;
 
-    protected static final int WIDTH = 1280;
-    protected static final int HEIGHT = 720;
-    final int FPS = 60;
-    Thread gameThread;
-    PlayManager pm;
+    private Thread gameThread;
+    private PlayManager pm;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -19,7 +20,6 @@ public class GamePanel extends JPanel implements Runnable {
         this.setOpaque(false); // Makes the panel fully transparent
         this.setBounds(0, 0, 1280, 720);
         pm = new PlayManager();
-
     }
 
     public void start() {
@@ -29,8 +29,10 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
+
         // Decide the time interval between every render within 1 second (1s = 1bil ns)
         double drawInterval = 1000000000 / FPS;
+
         // Determine the occurent time (in the program) of the next render
         double nextDrawTime = System.nanoTime() + drawInterval;
 
@@ -40,32 +42,27 @@ public class GamePanel extends JPanel implements Runnable {
             // Perform rendering and etc.
             update();
             repaint();
-            // System.err.println("painted");
 
             try {
-                // Find the remaining time after rendering, as the program may have free time
-                // until the next render. (1m ns = 1 milisec)
 
-                long remainingTime = (long) ((nextDrawTime - System.nanoTime()) / 10000000);
+                // Find the remaining time after rendering until the next render as the program
+                // may have free time
+                long remainingTime = (long) ((nextDrawTime - System.nanoTime()) / 10000000); // (1m ns = 1milisec)
 
                 if (remainingTime > 0) {
                     // Sleep/stop the thread until the next render happen
                     Thread.sleep(remainingTime);
-                    // move_length += 1;
                 }
 
             } catch (InterruptedException e) {
                 System.err.println(e);
-
             }
-
             // Update next render time
             nextDrawTime += drawInterval;
-
         }
     }
 
-    private void update() {
+    public void update() {
 
     }
 

@@ -10,7 +10,7 @@ public class Main {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
 
-        // Use a JLayeredPane for explicit layering
+        // Use a JLayeredPane to layer background and the actual gamne
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(new Dimension(1280, 720));
 
@@ -22,7 +22,7 @@ public class Main {
         GamePanel gp = new GamePanel();
         layeredPane.add(gp, JLayeredPane.PALETTE_LAYER); // Add to a higher layer
 
-        // Add the layered pane to the JFrame
+        // Add the layered pane to the window
         window.add(layeredPane);
         window.pack();
         window.setLocationRelativeTo(null);

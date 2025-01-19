@@ -11,35 +11,43 @@ import mino.Mino;
 import mino.Mino_L;
 
 public class PlayManager {
-    private final int PLAYFIELD_WIDTH = 360;
-    private final int PLAYFIELD_HEIGHT = 600;
-    private final int HUD_SIDE = 200; // only 1 value because its a square
+    // TODO: The game window will be calculated responsively later
+    public static final int PLAYFIELD_WIDTH = 300;
+    public static final int PLAYFIELD_HEIGHT = 600;
+    public static final int HUD_SIDE = 200; // only 1 value because its a square
 
     private static int playfield_x;
     private static int playfield_y;
     private static int hud_x;
     private static int hud_y;
 
-    private static Mino_L currentMino;
-
-    // private static int botom_y;
+    private static Mino[] minos;
+    // private final int MINO_START_X;
+    private final int MINO_START_Y;
 
     public PlayManager() {
-        super();
-        // 1st term = middle point of the game, minus half of the playfield width allow
-        // the playfield to be perfectly center
+
+        // Find middle point of the window, set it back half the playfield width
+        // allowing it to perfectly center (to the window)
         playfield_x = (GamePanel.WIDTH / 2) - (PLAYFIELD_WIDTH / 2);
+
         // Hard-code y of the playfield, leaving a distance of 50 pixel from the top
         playfield_y = 50;
 
-        // HUD will be 100px, away thus starting point of playfield+its width + 100(px)
+        // HUD will be 100px away from playfield to the right
         hud_x = playfield_x + PLAYFIELD_WIDTH + 100;
-        // HUD bottom side will align with playfield, thus its starting y will be
-        // HUD_SIDE(px) away from the playfield bottom
+
+        // HUD will align with playfield, its y will be HUD_SIDE(px) away from the
+        // playfield bottom
         hud_y = playfield_y + PLAYFIELD_HEIGHT - HUD_SIDE;
 
-        currentMino = new Mino_L();
-        currentMino.setXY(playfield_x, playfield_y);
+        minos = new Mino[5];
+        MINO_START_Y = playfield_y + Block.SIZE;
+
+        for (int i = 0; i < minos.length; i++) {
+            minos[i] = new Mino_L();
+            minos[i].setXY(playfield_x + (i * 2 * Block.SIZE), MINO_START_Y);
+        }
 
     }
 
@@ -75,15 +83,14 @@ public class PlayManager {
          * RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
          * g2.drawString("NEXT", x + 60, y + 60);
          */
-
         // Render playfield and HUD area
-        Color color = new Color(255, 255, 255, 100);
+        Color color = new Color(0, 0, 0, 100);
         g2.setColor(color);
         g2.fillRect(playfield_x, playfield_y, PLAYFIELD_WIDTH, PLAYFIELD_HEIGHT);
         g2.fillRect(hud_x, hud_y, HUD_SIDE, HUD_SIDE);
 
         // Render playfield and HUD border
-        color = new Color(0, 0, 0, 140);
+        color = new Color(0, 0, 0, 180);
         g2.setColor(color);
         g2.setStroke(new BasicStroke(6f)); // Set width of the border
         g2.drawRect(playfield_x - 3, playfield_y - 3, PLAYFIELD_WIDTH + 6, PLAYFIELD_HEIGHT + 6);
@@ -97,7 +104,9 @@ public class PlayManager {
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.drawString("NEXT", hud_x + 60, hud_y + 60);
 
-        currentMino.draw(g2);
+        for (Mino mino : minos) {
+            mino.draw(g2);
+        }
 
     }
 }
