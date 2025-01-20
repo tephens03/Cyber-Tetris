@@ -12,8 +12,8 @@ public class Mino_L extends Mino {
         // b1
         // b0
         // b2 b3
-        blocks[0].x = x + Block.MARGIN;
-        blocks[0].y = y + Block.MARGIN;
+        blocks[0].x = x;
+        blocks[0].y = y;
 
         blocks[1].x = blocks[0].x;
         blocks[1].y = blocks[0].y - Block.SIZE;

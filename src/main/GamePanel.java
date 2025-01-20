@@ -9,7 +9,7 @@ public class GamePanel extends JPanel implements Runnable {
     // TODO: The game window will be calculated responsively later
     public static final int WIDTH = 1280;
     public static final int HEIGHT = 720;
-    public final int FPS = 10;
+    public final int FPS = 60;
 
     private Thread gameThread;
     private PlayManager pm;
@@ -63,7 +63,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void update() {
-
+        pm.update();
     }
 
     public void paintComponent(Graphics g) {

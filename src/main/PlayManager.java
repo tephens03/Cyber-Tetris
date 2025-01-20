@@ -15,15 +15,16 @@ public class PlayManager {
     public static final int PLAYFIELD_WIDTH = 300;
     public static final int PLAYFIELD_HEIGHT = 600;
     public static final int HUD_SIDE = 200; // only 1 value because its a square
+    public static final int DROP_INTERVAL = 60;
 
     private static int playfield_x;
     private static int playfield_y;
     private static int hud_x;
     private static int hud_y;
 
-    private static Mino[] minos;
-    // private final int MINO_START_X;
+    public Mino currentMino;
     private final int MINO_START_Y;
+    private final int MINO_START_X;
 
     public PlayManager() {
 
@@ -41,17 +42,17 @@ public class PlayManager {
         // playfield bottom
         hud_y = playfield_y + PLAYFIELD_HEIGHT - HUD_SIDE;
 
-        minos = new Mino[5];
+        currentMino = new Mino_L();
+        // Calculate spawning coordinate of each Mino
         MINO_START_Y = playfield_y + Block.SIZE;
-
-        for (int i = 0; i < minos.length; i++) {
-            minos[i] = new Mino_L();
-            minos[i].setXY(playfield_x + (i * 2 * Block.SIZE), MINO_START_Y);
-        }
+        MINO_START_X = (PLAYFIELD_WIDTH / 2) + playfield_x - Block.SIZE;
+        currentMino.setXY(MINO_START_X, MINO_START_Y);
 
     }
 
     public void update() {
+
+        currentMino.update();
     }
 
     public void draw(Graphics2D g2) {
@@ -104,9 +105,7 @@ public class PlayManager {
                 RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.drawString("NEXT", hud_x + 60, hud_y + 60);
 
-        for (Mino mino : minos) {
-            mino.draw(g2);
-        }
+        currentMino.draw(g2);
 
     }
 }
