@@ -24,6 +24,7 @@ abstract public class Mino {
     }
 
     public void update() {
+        // contain the number of px the mino will shift (if any) to left or right
         int distanceToShift = 0;
 
         if (KeyHandler.upPressed) {
@@ -32,26 +33,42 @@ abstract public class Mino {
         } else if (KeyHandler.leftPressed) {
             System.out.println("Left Arrrow-Key is pressed!");
             KeyHandler.leftPressed = false;
-            distanceToShift = -Block.SIZE;
+            distanceToShift = -Block.SIZE; // will go "back" Block.SIZE px therefore a negative value
         } else if (KeyHandler.downPressed) {
             System.out.println("Down Arrrow-Key is pressed!");
             KeyHandler.downPressed = false;
         } else if (KeyHandler.rightPressed) {
             System.out.println("Right Arrrow-Key is pressed!");
-            KeyHandler.rightPressed = false;
+            KeyHandler.rightPressed = false; // will go forward Block.SIZEpx therefore positive value
             distanceToShift = Block.SIZE;
         }
 
-        for (Block block : blocks) {
-            block.x += distanceToShift;
+        // A bit repetitive and hard to read
+        // ++autoDropCounter;
+        // for (Block block : blocks) {
+        // if (distanceToShift == 0 && autoDropCounter % PlayManager.DROP_INTERVAL != 0)
+        // {
+        // break;
+        // }
+        // block.x += distanceToShift;
+        // if (autoDropCounter % PlayManager.DROP_INTERVAL == 0) {
+        // block.y += Block.SIZE;
+        // }
+        // }
+
+        // Iteration may happen more than once in return for readiblilty
+        if (distanceToShift != 0) {
+            for (Block block : blocks) {
+                block.x += distanceToShift;
+            }
         }
-        
         if (++autoDropCounter == PlayManager.DROP_INTERVAL) {
             for (Block block : blocks) {
                 block.y += Block.SIZE;
             }
             autoDropCounter = 0;
         }
+
     }
 
     public void draw(Graphics2D g2) {
