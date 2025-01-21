@@ -13,12 +13,18 @@ public class GamePanel extends JPanel implements Runnable {
 
     private Thread gameThread;
     private PlayManager pm;
+    private KeyHandler kh;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         this.setLayout(null);
         this.setOpaque(false); // Makes the panel fully transparent
         this.setBounds(0, 0, 1280, 720);
+        
+        kh = new KeyHandler();
+        this.addKeyListener(kh);
+        this.setFocusable(true);
+        this.setFocusTraversalKeysEnabled(false);
         pm = new PlayManager();
     }
 

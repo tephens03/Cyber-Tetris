@@ -2,6 +2,7 @@ package mino;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import main.KeyHandler;
 import main.PlayManager;
 
 abstract public class Mino {
@@ -23,10 +24,31 @@ abstract public class Mino {
     }
 
     public void update() {
-        autoDropCounter++;
-        if (autoDropCounter == PlayManager.DROP_INTERVAL) {
-            for (int i = 0; i < blocks.length; i++) {
-                blocks[i].y += Block.SIZE;
+        int distanceToShift = 0;
+
+        if (KeyHandler.upPressed) {
+            System.out.println("Up Arrrow-Key is pressed!");
+            KeyHandler.upPressed = false;
+        } else if (KeyHandler.leftPressed) {
+            System.out.println("Left Arrrow-Key is pressed!");
+            KeyHandler.leftPressed = false;
+            distanceToShift = -Block.SIZE;
+        } else if (KeyHandler.downPressed) {
+            System.out.println("Down Arrrow-Key is pressed!");
+            KeyHandler.downPressed = false;
+        } else if (KeyHandler.rightPressed) {
+            System.out.println("Right Arrrow-Key is pressed!");
+            KeyHandler.rightPressed = false;
+            distanceToShift = Block.SIZE;
+        }
+
+        for (Block block : blocks) {
+            block.x += distanceToShift;
+        }
+        
+        if (++autoDropCounter == PlayManager.DROP_INTERVAL) {
+            for (Block block : blocks) {
+                block.y += Block.SIZE;
             }
             autoDropCounter = 0;
         }
