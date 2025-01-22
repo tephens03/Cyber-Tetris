@@ -40,7 +40,7 @@ public class PlayManager {
         // playfield bottom
         hud_y = playfield_y + PLAYFIELD_HEIGHT - HUD_SIDE;
 
-        currentMino = new Mino_O();
+        currentMino = new Mino_L();
         // Calculate spawning coordinate of each Mino
         MINO_START_Y = playfield_y + Block.SIZE;
         MINO_START_X = (PLAYFIELD_WIDTH / 2) + playfield_x - Block.SIZE;
