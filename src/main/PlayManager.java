@@ -8,6 +8,7 @@ import java.awt.RenderingHints;
 
 import mino.Block;
 import mino.Mino;
+import mino.Mino_J;
 import mino.Mino_L;
 
 public class PlayManager {
@@ -42,7 +43,7 @@ public class PlayManager {
         // playfield bottom
         hud_y = playfield_y + PLAYFIELD_HEIGHT - HUD_SIDE;
 
-        currentMino = new Mino_L();
+        currentMino = new Mino_J();
         // Calculate spawning coordinate of each Mino
         MINO_START_Y = playfield_y + Block.SIZE;
         MINO_START_X = (PLAYFIELD_WIDTH / 2) + playfield_x - Block.SIZE;
