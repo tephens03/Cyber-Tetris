@@ -2,7 +2,6 @@ package mino;
 
 import java.awt.Color;
 import java.awt.Rectangle;
-
 import main.PlayManager;
 
 /**

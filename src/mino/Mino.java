@@ -78,6 +78,7 @@ abstract public class Mino {
      * Moves the mino left, right, or down and rotates it if necessary.
      */
     public void update() {
+
         int distanceToShift = 0; // Tracks how many pixels the mino will move (left or right)
 
         checkMovementCollision(); // Check for collisions before moving
@@ -118,6 +119,7 @@ abstract public class Mino {
             }
             autoDropCounter = 0; // Reset the counter after moving the mino down
         }
+
     }
 
     /**

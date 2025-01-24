@@ -69,12 +69,14 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Run the game loop while the thread is alive
         while (gameThread.isAlive()) {
+
             update(); // Update the game logic
             repaint(); // Request the panel to repaint (render the current state)
 
             try {
                 // Calculate the remaining time before the next frame
-                long remainingTime = (long) ((nextDrawTime - System.nanoTime()) / 1000000); // Convert to milliseconds
+                long remainingTime = (long) ((nextDrawTime - System.nanoTime()) / 1000000); // Convert to
+                                                                                            // milliseconds
 
                 // Sleep the thread for the remaining time to maintain the frame rate
                 if (remainingTime > 0) {
@@ -88,6 +90,7 @@ public class GamePanel extends JPanel implements Runnable {
             // Update the time for the next frame
             nextDrawTime += drawInterval;
         }
+
     }
 
     /**
