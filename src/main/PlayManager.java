@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.Random;
 
 import mino.*;
 
@@ -40,10 +41,11 @@ public class PlayManager {
         // playfield bottom
         hud_y = playfield_y + PLAYFIELD_HEIGHT - HUD_SIDE;
 
-        currentMino = new Mino_I();
         // Calculate spawning coordinate of each Mino
         MINO_START_Y = playfield_y + Block.SIZE;
         MINO_START_X = (PLAYFIELD_WIDTH / 2) + playfield_x - Block.SIZE;
+
+        currentMino = pickRandomMino();
         currentMino.setXY(MINO_START_X, MINO_START_Y);
 
     }
@@ -104,6 +106,36 @@ public class PlayManager {
         g2.drawString("NEXT", hud_x + 60, hud_y + 60);
 
         currentMino.draw(g2);
+
+    }
+
+    public Mino pickRandomMino() {
+        int option = new Random().nextInt(7);
+        Mino mino = null;
+        switch (option) {
+            case 1:
+                mino = new Mino_I();
+                break;
+            case 2:
+                mino = new Mino_J();
+                break;
+            case 3:
+                mino = new Mino_L();
+                break;
+            case 4:
+                mino = new Mino_O();
+                break;
+            case 5:
+                mino = new Mino_S();
+                break;
+            case 6:
+                mino = new Mino_T();
+                break;
+            default:
+                mino = new Mino_Z();
+
+        }
+        return mino;
 
     }
 }
