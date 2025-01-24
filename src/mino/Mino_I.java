@@ -3,6 +3,7 @@ package mino;
 import java.awt.Color;
 
 public class Mino_I extends Mino {
+    
     public Mino_I() {
         super(Color.CYAN);
     }

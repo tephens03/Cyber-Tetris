@@ -9,132 +9,128 @@ import java.util.Random;
 
 import mino.*;
 
+/**
+ * The PlayManager class handles the logic and rendering for the game.
+ * It manages the playfield, the Heads-Up Display (HUD), and the active mino.
+ */
 public class PlayManager {
-    // TODO: The game window will be calculated responsively later
-    public static final int PLAYFIELD_WIDTH = 300;
-    public static final int PLAYFIELD_HEIGHT = 600;
-    public static final int HUD_SIDE = 200; // only 1 value because its a square
-    public static final int DROP_INTERVAL = 60;
 
-    public static int playfield_x;
-    public static int playfield_y;
-    private static int hud_x;
-    private static int hud_y;
+    // Constants for the playfield and HUD dimensions
+    public static final int PLAYFIELD_WIDTH = 300; // Width of the playfield in pixels
+    public static final int PLAYFIELD_HEIGHT = 600; // Height of the playfield in pixels
+    public static final int HUD_SIDE = 200; // Size of the HUD square in pixels
+    public static final int DROP_INTERVAL = 60; // Frames before a mino drops automatically
 
+    // Coordinates for playfield and HUD
+    public static int playfield_x; // X-coordinate of the playfield's top-left corner
+    public static int playfield_y; // Y-coordinate of the playfield's top-left corner
+    private static int hud_x; // X-coordinate of the HUD's top-left corner
+    private static int hud_y; // Y-coordinate of the HUD's top-left corner
+
+    // The currently active mino
     public Mino currentMino;
-    private final int MINO_START_Y;
-    private final int MINO_START_X;
 
+    // Coordinates for spawning new minos
+    private final int MINO_START_Y; // Starting Y-coordinate for new minos
+    private final int MINO_START_X; // Starting X-coordinate for new minos
+
+    /**
+     * Constructor for PlayManager. Initializes the playfield, HUD positions,
+     * and the first active mino.
+     */
     public PlayManager() {
 
-        // Find middle point of the window, set it back half the playfield width
-        // allowing it to perfectly center (to the window)
+        // Calculate the X-coordinate for centering the playfield horizontally
         playfield_x = (GamePanel.WIDTH / 2) - (PLAYFIELD_WIDTH / 2);
 
-        // Hard-code y of the playfield, leaving a distance of 50 pixel from the top
-        playfield_y = 50;
+        // Set the Y-coordinate for the playfield with a fixed top margin
+        playfield_y = 50; // 50px margin from the top
 
-        // HUD will be 100px away from playfield to the right
-        hud_x = playfield_x + PLAYFIELD_WIDTH + 100;
+        // Calculate the HUD's position relative to the playfield
+        hud_x = playfield_x + PLAYFIELD_WIDTH + 100; // 100px gap to the right of the playfield
+        hud_y = playfield_y + PLAYFIELD_HEIGHT - HUD_SIDE; // Align with the playfield bottom
 
-        // HUD will align with playfield, its y will be HUD_SIDE(px) away from the
-        // playfield bottom
-        hud_y = playfield_y + PLAYFIELD_HEIGHT - HUD_SIDE;
+        // Determine the spawn position for minos
+        MINO_START_Y = playfield_y + Block.SIZE; // Slightly below the playfield's top
+        MINO_START_X = (PLAYFIELD_WIDTH / 2) + playfield_x - Block.SIZE; // Centered horizontally
 
-        // Calculate spawning coordinate of each Mino
-        MINO_START_Y = playfield_y + Block.SIZE;
-        MINO_START_X = (PLAYFIELD_WIDTH / 2) + playfield_x - Block.SIZE;
-
+        // Initialize the first mino and set its spawn position
         currentMino = pickRandomMino();
         currentMino.setXY(MINO_START_X, MINO_START_Y);
-
     }
 
+    /**
+     * Updates the game logic, such as the position of the current mino.
+     */
     public void update() {
-
         currentMino.update();
     }
 
+    /**
+     * Draws the playfield, HUD, and current mino on the screen.
+     *
+     * @param g2 The Graphics2D object used for rendering.
+     */
     public void draw(Graphics2D g2) {
-        /*
-         * // Draw the game border
-         * Color color = new Color(255, 255, 255, 140);
-         * g2.setColor(color);
-         * g2.setStroke(new BasicStroke(6f)); // Set width of the border
-         * // Since border-width = 6, we push the coordinate 6px backward, we want to
-         * keep
-         * // the content inside the rect 600x360 so we include the double border width
-         * g2.drawRect(left_x - 6, top_y - 6, WIDTH + 12, HEIGHT + 12);
-         * int x = right_x + 100;
-         * int y = botom_y - 200;
-         * g2.drawRect(x, y, 200, 200); // Draw the score menu border
-         * 
-         * // Fill the gamezone background
-         * color = new Color(255, 255, 255, 100);
-         * g2.setColor(color);
-         * g2.fillRect(left_x, top_y, WIDTH, HEIGHT);
-         * // Fill the score menu background
-         * g2.fillRect(x + 6, y + 6, 200 - 12, 200 - 12);
-         * 
-         * // Render Text
-         * color = new Color(255, 255, 255);
-         * g2.setColor(color);
-         * g2.setFont(new Font("Ariel", Font.PLAIN, 30));
-         * g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-         * RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-         * g2.drawString("NEXT", x + 60, y + 60);
-         */
-        // Render playfield and HUD area
-        Color color = new Color(0, 0, 0, 100);
+        // Render the playfield background
+        Color color = new Color(0, 0, 0, 100); // Semi-transparent black
         g2.setColor(color);
-        g2.fillRect(playfield_x, playfield_y, PLAYFIELD_WIDTH, PLAYFIELD_HEIGHT);
-        g2.fillRect(hud_x, hud_y, HUD_SIDE, HUD_SIDE);
+        g2.fillRect(playfield_x, playfield_y, PLAYFIELD_WIDTH, PLAYFIELD_HEIGHT); // Playfield area
+        g2.fillRect(hud_x, hud_y, HUD_SIDE, HUD_SIDE); // HUD area
 
-        // Render playfield and HUD border
-        color = new Color(0, 0, 0, 180);
+        // Render borders for the playfield and HUD
+        color = new Color(0, 0, 0, 180); // Darker black for borders
         g2.setColor(color);
-        g2.setStroke(new BasicStroke(6f)); // Set width of the border
-        g2.drawRect(playfield_x - 3, playfield_y - 3, PLAYFIELD_WIDTH + 6, PLAYFIELD_HEIGHT + 6);
-        g2.drawRect(hud_x - 3, hud_y - 3, HUD_SIDE + 6, HUD_SIDE + 6);
+        g2.setStroke(new BasicStroke(6f)); // Border thickness
+        g2.drawRect(playfield_x - 3, playfield_y - 3, PLAYFIELD_WIDTH + 6, PLAYFIELD_HEIGHT + 6); // Playfield border
+        g2.drawRect(hud_x - 3, hud_y - 3, HUD_SIDE + 6, HUD_SIDE + 6); // HUD border
 
-        // Render HUD text
-        color = new Color(255, 255, 255);
+        // Render HUD label text
+        color = new Color(255, 255, 255); // White color for text
         g2.setColor(color);
-        g2.setFont(new Font("Ariel", Font.PLAIN, 30));
+        g2.setFont(new Font("Ariel", Font.PLAIN, 30)); // Set font and size
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2.drawString("NEXT", hud_x + 60, hud_y + 60);
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON); // Enable smoother text rendering
+        g2.drawString("NEXT", hud_x + 60, hud_y + 60); // Draw "NEXT" label for the HUD
 
+        // Render the current mino
         currentMino.draw(g2);
     }
 
+    /**
+     * Randomly selects one of the seven possible mino shapes.
+     *
+     * @return A randomly chosen mino object.
+     */
     public Mino pickRandomMino() {
+        // Generate a random number between 0 and 6 (inclusive)
         int option = new Random().nextInt(7);
         Mino mino = null;
+
+        // Instantiate a mino based on the random number
         switch (option) {
             case 1:
-                mino = new Mino_I();
+                mino = new Mino_I(); // Straight line mino
                 break;
             case 2:
-                mino = new Mino_J();
+                mino = new Mino_J(); // J-shaped mino
                 break;
             case 3:
-                mino = new Mino_L();
+                mino = new Mino_L(); // L-shaped mino
                 break;
             case 4:
-                mino = new Mino_O();
+                mino = new Mino_O(); // Square-shaped mino
                 break;
             case 5:
-                mino = new Mino_S();
+                mino = new Mino_S(); // S-shaped mino
                 break;
             case 6:
-                mino = new Mino_T();
+                mino = new Mino_T(); // T-shaped mino
                 break;
             default:
-                mino = new Mino_Z();
+                mino = new Mino_Z(); // Z-shaped mino (default case)
                 break;
         }
         return mino;
-
     }
 }
