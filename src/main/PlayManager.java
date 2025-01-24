@@ -16,8 +16,8 @@ public class PlayManager {
     public static final int HUD_SIDE = 200; // only 1 value because its a square
     public static final int DROP_INTERVAL = 60;
 
-    private static int playfield_x;
-    private static int playfield_y;
+    public static int playfield_x;
+    public static int playfield_y;
     private static int hud_x;
     private static int hud_y;
 
@@ -106,7 +106,6 @@ public class PlayManager {
         g2.drawString("NEXT", hud_x + 60, hud_y + 60);
 
         currentMino.draw(g2);
-
     }
 
     public Mino pickRandomMino() {
@@ -133,7 +132,7 @@ public class PlayManager {
                 break;
             default:
                 mino = new Mino_Z();
-
+                break;
         }
         return mino;
 
