@@ -82,7 +82,6 @@ abstract public class Mino {
         // }
         // autoDropCounter = 0;
         // }
-
     }
 
     public void draw(Graphics2D g2) {
