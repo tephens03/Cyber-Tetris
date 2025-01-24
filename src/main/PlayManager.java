@@ -95,6 +95,13 @@ public class PlayManager {
 
         // Render the current mino
         currentMino.draw(g2);
+
+        // Draw Pause
+        g2.setColor((Color.yellow));
+        g2.setFont(g2.getFont().deriveFont(50f));
+        if (KeyHandler.pausePressed == true) {
+            g2.drawString("PAUSED", playfield_x + 60, playfield_y + 300);
+        }
     }
 
     /**

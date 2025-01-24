@@ -97,7 +97,9 @@ public class GamePanel extends JPanel implements Runnable {
      * Updates the game state by delegating to the PlayManager.
      */
     public void update() {
-        pm.update();
+        if (KeyHandler.pausePressed == false) {
+            pm.update();
+        }
     }
 
     /**
