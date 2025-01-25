@@ -145,10 +145,14 @@ abstract public class Mino {
     public void draw(Graphics2D g2) {
         for (Block block : blocks) {
             g2.setColor(Color.WHITE);
-            g2.fillRect(block.x, block.y, Block.SIZE, Block.SIZE); // Draw the outline
+            g2.fillOval(block.x, block.y, Block.SIZE, Block.SIZE); // Draw the outline
+
             g2.setColor(blocks[0].color);
-            g2.fillRect(block.x + Block.MARGIN, block.y + Block.MARGIN, Block.SIZE - (2 * Block.MARGIN),
+            g2.fillOval(block.x + Block.MARGIN, block.y + Block.MARGIN, Block.SIZE - (2 * Block.MARGIN),
                     Block.SIZE - (2 * Block.MARGIN)); // Fill the block with its color
+            // g2.fillRect(block.x + Block.MARGIN, block.y + Block.MARGIN, Block.SIZE - (2 *
+            // Block.MARGIN),
+            // Block.SIZE - (2 * Block.MARGIN)); // Fill the block with its color
         }
     }
 
@@ -214,11 +218,11 @@ abstract public class Mino {
                         rightCollision = true;
                     }
                     // If coordinate touches game left border, means it has reached the end
-                     if (block.x - Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
+                    if (block.x - Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
                         leftCollision = true;
                     }
                     // If mino touches the bottom border, means it is time to shut down
-                     if (block.y + Block.SIZE == existedBlock.y && block.x == existedBlock.x) {
+                    if (block.y + Block.SIZE == existedBlock.y && block.x == existedBlock.x) {
                         bottomCollision = true;
                         active = false;
                     }

@@ -20,7 +20,7 @@ public class PlayManager {
     public static final int PLAYFIELD_WIDTH = 300; // Width of the playfield in pixels
     public static final int PLAYFIELD_HEIGHT = 600; // Height of the playfield in pixels
     public static final int HUD_SIDE = 200; // Size of the HUD square in pixels
-    public static final int DROP_INTERVAL = 60; // Frames before a mino drops automatically
+    public static final int DROP_INTERVAL = 10; // Frames before a mino drops automatically
 
     // Coordinates for playfield and HUD
     public static int playfield_x; // X-coordinate of the playfield's top-left corner
@@ -77,16 +77,23 @@ public class PlayManager {
      */
     public void update() {
         if (currentMino.active) {
+
             currentMino.update();
+
         } else {
+
             minos.add(currentMino);
 
-            currentMino = nextMino;
-            currentMino.setXY(MINO_START_X, MINO_START_Y);
+            if (currentMino.blocks[0].x == MINO_START_X && currentMino.blocks[0].y == MINO_START_Y) {
+                System.out.println("GAME OVER");
+                System.exit(0);
+            } else {
+                currentMino = nextMino;
+                currentMino.setXY(MINO_START_X, MINO_START_Y);
 
-
-            nextMino = pickRandomMino();
-            nextMino.setXY(HUD_MINO_START_X, HUD_MINO_START_Y);
+                nextMino = pickRandomMino();
+                nextMino.setXY(HUD_MINO_START_X, HUD_MINO_START_Y);
+            }
 
         }
 
@@ -150,7 +157,7 @@ public class PlayManager {
         // Instantiate a mino based on the random number
         switch (option) {
             case 1:
-            mino = new Mino_Z(); // Z-shaped mino (default case)
+                mino = new Mino_Z(); // Z-shaped mino (default case)
 
                 // mino = new Mino_J(); // J-shaped mino
                 break;

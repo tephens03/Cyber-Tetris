@@ -20,10 +20,10 @@ public class Block extends Rectangle {
      * playfield width.
      */
     public static int SIZE = PlayManager.PLAYFIELD_WIDTH / 10;
-    protected static int MARGIN = 2;// The margin between blocks
-    protected int x; // The x-coordinate of the block on the playfield.
-    protected int y; // The y-coordinate of the block on the playfield.
-    protected Color color;// The color of the block.
+    public static int MARGIN = 2;// The margin between blocks
+    public int x; // The x-coordinate of the block on the playfield.
+    public int y; // The y-coordinate of the block on the playfield.
+    public Color color;// The color of the block.
 
     /**
      * Constructs a new Block with the specified color.
