@@ -12,7 +12,7 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
     // Flags for key states, used to track whether specific keys are currently
     // pressed
-    public static boolean upPressed, leftPressed, downPressed, rightPressed, pausePressed ;
+    public static boolean upPressed, leftPressed, downPressed, rightPressed, pausePressed;
 
     /**
      * Called when a key is typed (pressed and released). This method is not used
@@ -46,13 +46,10 @@ public class KeyHandler implements KeyListener {
         } else if (keyCode == KeyEvent.VK_D) { // D key pressed (right)
             rightPressed = true;
         } else if (keyCode == KeyEvent.VK_SPACE) { // Space key pressed (pause toggle)
-            System.out.println(pausePressed);
             if (pausePressed) {
-                System.out.println("1");
                 pausePressed = false;
             } else {
                 pausePressed = true;
-                System.out.println("2");
             }
         }
     }

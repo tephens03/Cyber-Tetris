@@ -19,6 +19,7 @@ abstract public class Mino {
     // Instance variables
     public Block[] blocks; // An array of blocks that make up the mino. A Tetrimino consists of 4 blocks.
     public Block[] tempBlocks; // Temporary array to hold the state of blocks before any transformation.
+    public boolean active; // A boolean variable to indicate if mino is still moveable
     private int autoDropCounter; // Counter to control the automatic downward movement of the mino.
     private int direction; // The direction the mino is currently facing (used for rotation).
 
@@ -34,6 +35,7 @@ abstract public class Mino {
      * @param c The color of the mino.
      */
     public Mino(Color c) {
+        active = true;
         autoDropCounter = 0; // Initialize autoDropCounter to 0
         direction = 1; // Set the default direction
         blocks = new Block[4]; // Initialize blocks array (4 blocks per mino)
@@ -64,12 +66,16 @@ abstract public class Mino {
      * @param direction The new direction to rotate the mino.
      */
     public void updateXY(int direction) {
-        this.direction = direction; // Set the current direction
 
-        // Copy the current block positions to tempBlocks
-        for (int i = 0; i < blocks.length; i++) {
-            blocks[i].x = tempBlocks[i].x;
-            blocks[i].y = tempBlocks[i].y;
+        checkRotateCollision();
+        if (!leftCollision && !rightCollision && !bottomCollision) {
+            this.direction = direction; // Set the current direction
+
+            // Copy the current block positions to tempBlocks
+            for (int i = 0; i < blocks.length; i++) {
+                blocks[i].x = tempBlocks[i].x;
+                blocks[i].y = tempBlocks[i].y;
+            }
         }
     }
 
@@ -93,10 +99,17 @@ abstract public class Mino {
             if (!leftCollision) {
                 distanceToShift = -Block.SIZE; // Move the mino left if there's no collision
             }
-        } else if (KeyHandler.downPressed && !bottomCollision) {
+        } else if (KeyHandler.downPressed) {
             System.out.println("Down Arrow-Key is pressed!");
             KeyHandler.downPressed = false;
-            autoDropCounter = PlayManager.DROP_INTERVAL - 1; // Drop the mino down faster
+            if (!bottomCollision) {
+                // autoDropCounter = PlayManager.DROP_INTERVAL - 1; // Drop the mino down faster
+                for (Block block : blocks) {
+                    block.y += Block.SIZE;
+                }
+                autoDropCounter=0;
+                return;
+            }
         } else if (KeyHandler.rightPressed) {
             System.out.println("Right Arrow-Key is pressed!");
             KeyHandler.rightPressed = false;
@@ -112,8 +125,9 @@ abstract public class Mino {
             }
         }
 
+        autoDropCounter++;
         // Handle automatic downward movement if it's time
-        if (++autoDropCounter == PlayManager.DROP_INTERVAL && !bottomCollision) {
+        if (!bottomCollision && ++autoDropCounter == PlayManager.DROP_INTERVAL) {
             for (Block block : blocks) {
                 block.y += Block.SIZE; // Move the blocks down by one block size
             }
@@ -161,7 +175,7 @@ abstract public class Mino {
 
     /**
      * Checks for collisions with the left, right, and bottom edges of the
-     * playfield.
+     * playfield for natural movement.
      * Sets the appropriate flags (leftCollision, rightCollision, bottomCollision)
      * based on the current position of the blocks.
      */
@@ -170,14 +184,67 @@ abstract public class Mino {
         rightCollision = false;
         bottomCollision = false;
 
+        checkExistedMinoCollision();
+
         for (Block block : blocks) {
+            // If coordinate is larger than the game border, set right collision flag
             if (block.x + Block.SIZE == PlayManager.playfield_x + PlayManager.PLAYFIELD_WIDTH) {
                 rightCollision = true;
             }
-            if (block.x == PlayManager.playfield_x) {
+            // If coordinate touches game left border, means it has reached the end
+            else if (block.x == PlayManager.playfield_x) {
                 leftCollision = true;
             }
-            if (block.y + Block.SIZE == PlayManager.playfield_y + PlayManager.PLAYFIELD_HEIGHT) {
+            // If mino touches the bottom border, means it is time to shut down
+            else if (block.y + Block.SIZE == PlayManager.playfield_y + PlayManager.PLAYFIELD_HEIGHT) {
+                bottomCollision = true;
+                active = false;
+            }
+        }
+
+    }
+
+    public void checkExistedMinoCollision() {
+
+        for (Block block : blocks) {
+            for (Mino existedMino : PlayManager.minos)
+                for (Block existedBlock : existedMino.blocks) {
+                    // If coordinate is larger than the game border, set right collision flag
+                    if (block.x + Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
+                        rightCollision = true;
+                    }
+                    // If coordinate touches game left border, means it has reached the end
+                    else if (block.x - Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
+                        leftCollision = true;
+                    }
+                    // If mino touches the bottom border, means it is time to shut down
+                    else if (block.y + Block.SIZE == existedBlock.y && block.x == existedBlock.x) {
+                        bottomCollision = true;
+                        active = false;
+                    }
+                }
+        }
+    }
+
+    /**
+     * Checks for collisions with the left, right, and bottom edges of the
+     * playfield.
+     * Sets the appropriate flags (leftCollision, rightCollision, bottomCollision)
+     * based on the current position of the blocks.
+     */
+    public void checkRotateCollision() {
+        leftCollision = false;
+        rightCollision = false;
+        bottomCollision = false;
+
+        for (Block block : tempBlocks) {
+            if (block.x >= PlayManager.playfield_x + PlayManager.PLAYFIELD_WIDTH) {
+                rightCollision = true;
+            }
+            if (block.x < PlayManager.playfield_x) {
+                leftCollision = true;
+            }
+            if (block.y >= PlayManager.playfield_y + PlayManager.PLAYFIELD_HEIGHT) {
                 bottomCollision = true;
             }
         }
