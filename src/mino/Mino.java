@@ -21,6 +21,7 @@ abstract public class Mino {
     public Block[] tempBlocks; // Temporary array to hold the state of blocks before any transformation.
     public boolean active; // A boolean variable to indicate if mino is still moveable
     private int autoDropCounter; // Counter to control the automatic downward movement of the mino.
+    private int counter; // Counter to control the automatic downward movement of the mino.
     private int direction; // The direction the mino is currently facing (used for rotation).
 
     private boolean leftCollision; // Flag to check if the mino collides with the left boundary.
@@ -36,6 +37,7 @@ abstract public class Mino {
      */
     public Mino(Color c) {
         active = true;
+        counter = 0;
         autoDropCounter = 0; // Initialize autoDropCounter to 0
         direction = 1; // Set the default direction
         blocks = new Block[4]; // Initialize blocks array (4 blocks per mino)
@@ -127,7 +129,7 @@ abstract public class Mino {
 
         autoDropCounter++;
         // Handle automatic downward movement if it's time
-        if (!bottomCollision && ++autoDropCounter == PlayManager.DROP_INTERVAL) {
+        if (!bottomCollision && ++autoDropCounter == 60) {
             for (Block block : blocks) {
                 block.y += Block.SIZE; // Move the blocks down by one block size
             }
@@ -201,8 +203,18 @@ abstract public class Mino {
             }
             // If mino touches the bottom border, means it is time to shut down
             if (block.y + Block.SIZE == PlayManager.playfield_y + PlayManager.PLAYFIELD_HEIGHT) {
+
                 bottomCollision = true;
-                active = false;
+
+                counter++;
+
+                System.out.println(counter);
+
+                if (counter == 60) {
+                    System.out.println(counter);
+                    active = false;
+                    counter = 0;
+                }
             }
         }
 
@@ -221,10 +233,15 @@ abstract public class Mino {
                     if (block.x - Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
                         leftCollision = true;
                     }
-                    // If mino touches the bottom border, means it is time to shut down
+                    // If mino touches the bottom border, means it is time to die
                     if (block.y + Block.SIZE == existedBlock.y && block.x == existedBlock.x) {
                         bottomCollision = true;
-                        active = false;
+                        counter++;
+                        if (counter == PlayManager.DROP_INTERVAL) {
+                            System.out.println(counter);
+                            active = false;
+                            counter = 0;
+                        }
                     }
                 }
         }

@@ -182,4 +182,9 @@ public class PlayManager {
         }
         return mino;
     }
+
+    private void deleteRow() {
+        int cellCount = 0;
+
+    }
 }
