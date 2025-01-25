@@ -150,8 +150,9 @@ public class PlayManager {
         // Instantiate a mino based on the random number
         switch (option) {
             case 1:
-                // mino = new Mino_I(); // Straight line mino
-                mino = new Mino_J(); // J-shaped mino
+            mino = new Mino_Z(); // Z-shaped mino (default case)
+
+                // mino = new Mino_J(); // J-shaped mino
                 break;
             case 2:
                 mino = new Mino_J(); // J-shaped mino
@@ -169,7 +170,7 @@ public class PlayManager {
                 mino = new Mino_T(); // T-shaped mino
                 break;
             default:
-                mino = new Mino_Z(); // Z-shaped mino (default case)
+                mino = new Mino_I(); // Z-shaped mino (default case)
                 break;
         }
         return mino;

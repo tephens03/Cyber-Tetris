@@ -107,7 +107,7 @@ abstract public class Mino {
                 for (Block block : blocks) {
                     block.y += Block.SIZE;
                 }
-                autoDropCounter=0;
+                autoDropCounter = 0;
                 return;
             }
         } else if (KeyHandler.rightPressed) {
@@ -192,11 +192,11 @@ abstract public class Mino {
                 rightCollision = true;
             }
             // If coordinate touches game left border, means it has reached the end
-            else if (block.x == PlayManager.playfield_x) {
+            if (block.x == PlayManager.playfield_x) {
                 leftCollision = true;
             }
             // If mino touches the bottom border, means it is time to shut down
-            else if (block.y + Block.SIZE == PlayManager.playfield_y + PlayManager.PLAYFIELD_HEIGHT) {
+            if (block.y + Block.SIZE == PlayManager.playfield_y + PlayManager.PLAYFIELD_HEIGHT) {
                 bottomCollision = true;
                 active = false;
             }
@@ -214,11 +214,11 @@ abstract public class Mino {
                         rightCollision = true;
                     }
                     // If coordinate touches game left border, means it has reached the end
-                    else if (block.x - Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
+                     if (block.x - Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
                         leftCollision = true;
                     }
                     // If mino touches the bottom border, means it is time to shut down
-                    else if (block.y + Block.SIZE == existedBlock.y && block.x == existedBlock.x) {
+                     if (block.y + Block.SIZE == existedBlock.y && block.x == existedBlock.x) {
                         bottomCollision = true;
                         active = false;
                     }
