@@ -21,7 +21,7 @@ abstract public class Mino {
     public Block[] tempBlocks; // Temporary array to hold the state of blocks before any transformation.
     public boolean active; // A boolean variable to indicate if mino is still moveable
     private int autoDropCounter; // Counter to control the automatic downward movement of the mino.
-    private int counter; // Counter to control the automatic downward movement of the mino.
+    private int deactivateMinoCounter; // Counter to control the automatic downward movement of the mino.
     private int direction; // The direction the mino is currently facing (used for rotation).
 
     private boolean leftCollision; // Flag to check if the mino collides with the left boundary.
@@ -37,7 +37,7 @@ abstract public class Mino {
      */
     public Mino(Color c) {
         active = true;
-        counter = 0;
+        deactivateMinoCounter = 0;
         autoDropCounter = 0; // Initialize autoDropCounter to 0
         direction = 1; // Set the default direction
         blocks = new Block[4]; // Initialize blocks array (4 blocks per mino)
@@ -89,20 +89,23 @@ abstract public class Mino {
 
         int distanceToShift = 0; // Tracks how many pixels the mino will move (left or right)
 
+        deactivateMino();
+
         checkMovementCollision(); // Check for collisions before moving
 
         if (KeyHandler.upPressed) {
-            System.out.println("Up Arrow-Key is pressed!");
+            // System.out.println("Up Arrow-Key is pressed!");
             rotateMino(); // Rotate the mino if up arrow key is pressed
             KeyHandler.upPressed = false;
+
         } else if (KeyHandler.leftPressed) {
-            System.out.println("Left Arrow-Key is pressed!");
+            // System.out.println("Left Arrow-Key is pressed!");
             KeyHandler.leftPressed = false;
             if (!leftCollision) {
                 distanceToShift = -Block.SIZE; // Move the mino left if there's no collision
             }
         } else if (KeyHandler.downPressed) {
-            System.out.println("Down Arrow-Key is pressed!");
+            // System.out.println("Down Arrow-Key is pressed!");
             KeyHandler.downPressed = false;
             if (!bottomCollision) {
                 // autoDropCounter = PlayManager.DROP_INTERVAL - 1; // Drop the mino down faster
@@ -113,7 +116,7 @@ abstract public class Mino {
                 return;
             }
         } else if (KeyHandler.rightPressed) {
-            System.out.println("Right Arrow-Key is pressed!");
+            // System.out.println("Right Arrow-Key is pressed!");
             KeyHandler.rightPressed = false;
             if (!rightCollision) {
                 distanceToShift = Block.SIZE; // Move the mino right if there's no collision
@@ -129,7 +132,7 @@ abstract public class Mino {
 
         autoDropCounter++;
         // Handle automatic downward movement if it's time
-        if (!bottomCollision && ++autoDropCounter == 60) {
+        if (!bottomCollision && autoDropCounter == 60) {
             for (Block block : blocks) {
                 block.y += Block.SIZE; // Move the blocks down by one block size
             }
@@ -146,15 +149,7 @@ abstract public class Mino {
      */
     public void draw(Graphics2D g2) {
         for (Block block : blocks) {
-            g2.setColor(Color.WHITE);
-            g2.fillOval(block.x, block.y, Block.SIZE, Block.SIZE); // Draw the outline
-
-            g2.setColor(blocks[0].color);
-            g2.fillOval(block.x + Block.MARGIN, block.y + Block.MARGIN, Block.SIZE - (2 * Block.MARGIN),
-                    Block.SIZE - (2 * Block.MARGIN)); // Fill the block with its color
-            // g2.fillRect(block.x + Block.MARGIN, block.y + Block.MARGIN, Block.SIZE - (2 *
-            // Block.MARGIN),
-            // Block.SIZE - (2 * Block.MARGIN)); // Fill the block with its color
+            block.draw(g2);
         }
     }
 
@@ -205,45 +200,58 @@ abstract public class Mino {
             if (block.y + Block.SIZE == PlayManager.playfield_y + PlayManager.PLAYFIELD_HEIGHT) {
 
                 bottomCollision = true;
+                // active = false;
 
-                counter++;
+                // counter++;
 
-                System.out.println(counter);
+                // System.out.println(counter);
 
-                if (counter == 60) {
-                    System.out.println(counter);
-                    active = false;
-                    counter = 0;
-                }
+                // if (counter == 60) {
+                // System.out.println(counter);
+                // active = false;
+                // counter = 0;
+                // }
             }
         }
 
     }
 
+    public void deactivateMino() {
+        if (bottomCollision == true) {
+            deactivateMinoCounter++;
+        }
+        if (deactivateMinoCounter == 15) {
+            active = false;
+        }
+    }
+
     public void checkExistedMinoCollision() {
 
         for (Block block : blocks) {
-            for (Mino existedMino : PlayManager.minos)
-                for (Block existedBlock : existedMino.blocks) {
-                    // If coordinate is larger than the game border, set right collision flag
-                    if (block.x + Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
-                        rightCollision = true;
-                    }
-                    // If coordinate touches game left border, means it has reached the end
-                    if (block.x - Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
-                        leftCollision = true;
-                    }
-                    // If mino touches the bottom border, means it is time to die
-                    if (block.y + Block.SIZE == existedBlock.y && block.x == existedBlock.x) {
-                        bottomCollision = true;
-                        counter++;
-                        if (counter == PlayManager.DROP_INTERVAL) {
-                            System.out.println(counter);
-                            active = false;
-                            counter = 0;
-                        }
-                    }
+            // for (Mino existedMino : PlayManager.minos)
+            for (Block existedBlock : PlayManager.blocks) {
+                // If coordinate is larger than the game border, set right collision flag
+                if (block.x + Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
+                    rightCollision = true;
                 }
+                // If coordinate touches game left border, means it has reached the end
+                if (block.x - Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
+                    leftCollision = true;
+                }
+                // If mino touches the bottom border, means it is time to die
+                if (block.y + Block.SIZE == existedBlock.y && block.x == existedBlock.x) {
+                    bottomCollision = true;
+                    // counter++;
+
+                    // if (counter == 60) {
+                    // System.out.println(counter);
+                    // active = false;
+                    // counter = 0;
+                    // }
+                    // }
+                    // }
+                }
+            }
         }
     }
 
@@ -269,6 +277,10 @@ abstract public class Mino {
                 bottomCollision = true;
             }
         }
+    }
+
+    public void deleteRow() {
+
     }
 
     /**

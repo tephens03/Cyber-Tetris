@@ -4,8 +4,13 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.List;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.Random;
 
 import mino.*;
@@ -31,7 +36,8 @@ public class PlayManager {
     // The currently active mino
     public Mino currentMino;
     public Mino nextMino;
-    public static ArrayList<Mino> minos;
+    public static LinkedList<Mino> minos;
+    public static LinkedList<Block> blocks;
 
     // Coordinates for spawning new minos
     private final int MINO_START_Y; // Starting Y-coordinate for current minos
@@ -44,7 +50,8 @@ public class PlayManager {
      * and the first active mino.
      */
     public PlayManager() {
-        minos = new ArrayList<Mino>();
+        blocks = new LinkedList<Block>();
+        minos = new LinkedList<Mino>();
         // Calculate the X-coordinate for centering the playfield horizontally
         playfield_x = (GamePanel.WIDTH / 2) - (PLAYFIELD_WIDTH / 2);
 
@@ -84,6 +91,10 @@ public class PlayManager {
 
             minos.add(currentMino);
 
+            for (Block block : currentMino.blocks) {
+                blocks.add(block);
+            }
+
             if (currentMino.blocks[0].x == MINO_START_X && currentMino.blocks[0].y == MINO_START_Y) {
                 System.out.println("GAME OVER");
                 System.exit(0);
@@ -93,10 +104,63 @@ public class PlayManager {
 
                 nextMino = pickRandomMino();
                 nextMino.setXY(HUD_MINO_START_X, HUD_MINO_START_Y);
+
+                checkDeleteRow();
             }
 
         }
 
+    }
+
+    public void checkDeleteRow() {
+        int x = playfield_x;
+        int y = playfield_y;
+
+        int count = 0;
+
+        Map<Block, Boolean> minoToDeleteIndex = new HashMap<>();
+
+        while (x < playfield_x + PLAYFIELD_WIDTH && y < playfield_y + PLAYFIELD_HEIGHT) {
+
+            for (Block block : blocks) {
+                if (block.x == x && block.y == y) {
+                    minoToDeleteIndex.put(block, true);
+                    count++;
+                    break;
+                }
+            }
+
+            x += Block.SIZE;
+
+            if (x >= playfield_x + PLAYFIELD_WIDTH) {
+                if (count == 10) {
+                    System.out.println("Yayyy");
+                    deleteRow(minoToDeleteIndex);
+                    minoToDeleteIndex = new HashMap<>();
+                }
+                x = playfield_x;
+                y += Block.SIZE;
+                count = 0;
+            }
+
+        }
+
+    }
+
+    public void deleteRow(Map<Block, Boolean> minoToDeleteIndex) {
+        // Sort the indices in descending order
+
+        // Iterate and remove blocks from the list
+        System.out.println("row");
+
+        System.out.println(minoToDeleteIndex.size());
+        for (int i = 0; i < blocks.size(); i++) {
+
+            if (minoToDeleteIndex.get(blocks.get(i))) {
+                blocks.remove(i);
+                i--;
+            }
+        }
     }
 
     /**
@@ -132,8 +196,8 @@ public class PlayManager {
 
         nextMino.draw(g2);
 
-        for (Mino mino : minos) {
-            mino.draw(g2);
+        for (Block block : blocks) {
+            block.draw(g2);
         }
 
         // Draw Pause
@@ -158,8 +222,6 @@ public class PlayManager {
         switch (option) {
             case 1:
                 mino = new Mino_Z(); // Z-shaped mino (default case)
-
-                // mino = new Mino_J(); // J-shaped mino
                 break;
             case 2:
                 mino = new Mino_J(); // J-shaped mino
@@ -168,7 +230,7 @@ public class PlayManager {
                 mino = new Mino_L(); // L-shaped mino
                 break;
             case 4:
-                mino = new Mino_O(); // Square-shaped mino
+                mino = new Mino_I(); // Square-shaped mino
                 break;
             case 5:
                 mino = new Mino_S(); // S-shaped mino
@@ -177,14 +239,10 @@ public class PlayManager {
                 mino = new Mino_T(); // T-shaped mino
                 break;
             default:
-                mino = new Mino_I(); // Z-shaped mino (default case)
+                mino = new Mino_O(); // Z-shaped mino (default case)
                 break;
         }
         return mino;
     }
 
-    private void deleteRow() {
-        int cellCount = 0;
-
-    }
 }

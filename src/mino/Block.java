@@ -1,6 +1,7 @@
 package mino;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import main.PlayManager;
 
@@ -32,5 +33,17 @@ public class Block extends Rectangle {
      */
     public Block(Color color) {
         this.color = color;
+    }
+
+    public void draw(Graphics2D g2) {
+        g2.setColor(Color.WHITE);
+        g2.fillOval(x, y, Block.SIZE, Block.SIZE); // Draw the outline
+
+        g2.setColor(color);
+        g2.fillOval(x + Block.MARGIN, y + Block.MARGIN, Block.SIZE - (2 * Block.MARGIN),
+                Block.SIZE - (2 * Block.MARGIN)); // Fill the block with its color
+        // g2.fillRect(block.x + Block.MARGIN, block.y + Block.MARGIN, Block.SIZE - (2 *
+        // Block.MARGIN),
+        // Block.SIZE - (2 * Block.MARGIN)); // Fill the block with its color
     }
 }
