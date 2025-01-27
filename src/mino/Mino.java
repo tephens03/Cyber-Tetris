@@ -7,21 +7,19 @@ import main.PlayManager;
 
 /**
  * The Mino class represents a single Tetrimino (block shape) in the Tetris
- * game.
- * It handles the blocks that form the mino, its movement, rotation, and
- * collision detection.
- * Each Mino consists of four blocks, and it provides functionality for updating
- * its position,
- * handling player input, and drawing the mino to the screen.
+ * game. It handles the blocks that form the mino, its movement, rotation, and
+ * collision detection. Each Mino consists of four blocks, and it provides
+ * functionality for updating its position, handling player input, and drawing
+ * the mino to the screen.
  */
 abstract public class Mino {
 
     // Instance variables
     public Block[] blocks; // An array of blocks that make up the mino. A Tetrimino consists of 4 blocks.
     public Block[] tempBlocks; // Temporary array to hold the state of blocks before any transformation.
-    public boolean active; // A boolean variable to indicate if mino is still moveable
+    public boolean active; // A boolean variable to indicate if mino is still moveable.
     private int autoDropCounter; // Counter to control the automatic downward movement of the mino.
-    private int deactivateMinoCounter; // Counter to control the automatic downward movement of the mino.
+    private int deactivateMinoCounter; // Counter to control the deactivation of the mino after touching the bottom.
     private int direction; // The direction the mino is currently facing (used for rotation).
 
     private boolean leftCollision; // Flag to check if the mino collides with the left boundary.
@@ -69,7 +67,7 @@ abstract public class Mino {
      */
     public void updateXY(int direction) {
 
-        checkRotateCollision();
+        checkRotateCollision(); // Check for collisions before rotating
         if (!leftCollision && !rightCollision && !bottomCollision) {
             this.direction = direction; // Set the current direction
 
@@ -89,37 +87,36 @@ abstract public class Mino {
 
         int distanceToShift = 0; // Tracks how many pixels the mino will move (left or right)
 
-        deactivateMino();
+        deactivateMino(); // Deactivate mino if it reaches the bottom
 
         checkMovementCollision(); // Check for collisions before moving
 
+        // Handle key press for rotation
         if (KeyHandler.upPressed) {
-            // System.out.println("Up Arrow-Key is pressed!");
             rotateMino(); // Rotate the mino if up arrow key is pressed
             KeyHandler.upPressed = false;
 
         } else if (KeyHandler.leftPressed) {
-            // System.out.println("Left Arrow-Key is pressed!");
+            // Move the mino left if there's no collision
             KeyHandler.leftPressed = false;
             if (!leftCollision) {
-                distanceToShift = -Block.SIZE; // Move the mino left if there's no collision
+                distanceToShift = -Block.SIZE; // Move the mino left by one block size
             }
         } else if (KeyHandler.downPressed) {
-            // System.out.println("Down Arrow-Key is pressed!");
+            // Move the mino down if there's no collision
             KeyHandler.downPressed = false;
             if (!bottomCollision) {
-                // autoDropCounter = PlayManager.DROP_INTERVAL - 1; // Drop the mino down faster
                 for (Block block : blocks) {
-                    block.y += Block.SIZE;
+                    block.y += Block.SIZE; // Move the blocks down by one block size
                 }
                 autoDropCounter = 0;
                 return;
             }
         } else if (KeyHandler.rightPressed) {
-            // System.out.println("Right Arrow-Key is pressed!");
+            // Move the mino right if there's no collision
             KeyHandler.rightPressed = false;
             if (!rightCollision) {
-                distanceToShift = Block.SIZE; // Move the mino right if there's no collision
+                distanceToShift = Block.SIZE; // Move the mino right by one block size
             }
         }
 
@@ -130,15 +127,14 @@ abstract public class Mino {
             }
         }
 
-        autoDropCounter++;
         // Handle automatic downward movement if it's time
-        if (!bottomCollision && autoDropCounter == 60) {
+        autoDropCounter++;
+        if (!bottomCollision && autoDropCounter == PlayManager.drop_interval) {
             for (Block block : blocks) {
                 block.y += Block.SIZE; // Move the blocks down by one block size
             }
             autoDropCounter = 0; // Reset the counter after moving the mino down
         }
-
     }
 
     /**
@@ -149,7 +145,7 @@ abstract public class Mino {
      */
     public void draw(Graphics2D g2) {
         for (Block block : blocks) {
-            block.draw(g2);
+            block.draw(g2); // Draw each block in the mino
         }
     }
 
@@ -185,71 +181,50 @@ abstract public class Mino {
         rightCollision = false;
         bottomCollision = false;
 
-        checkExistedMinoCollision();
+        checkExistedMinoCollision(); // Check for collisions with other minos
 
+        // Check for boundary collisions with the playfield edges
         for (Block block : blocks) {
-            // If coordinate is larger than the game border, set right collision flag
             if (block.x + Block.SIZE == PlayManager.playfield_x + PlayManager.PLAYFIELD_WIDTH) {
                 rightCollision = true;
             }
-            // If coordinate touches game left border, means it has reached the end
             if (block.x == PlayManager.playfield_x) {
                 leftCollision = true;
             }
-            // If mino touches the bottom border, means it is time to shut down
             if (block.y + Block.SIZE == PlayManager.playfield_y + PlayManager.PLAYFIELD_HEIGHT) {
-
-                bottomCollision = true;
-                // active = false;
-
-                // counter++;
-
-                // System.out.println(counter);
-
-                // if (counter == 60) {
-                // System.out.println(counter);
-                // active = false;
-                // counter = 0;
-                // }
+                bottomCollision = true; // Mino hits the bottom
             }
         }
-
     }
 
+    /**
+     * Deactivates the mino after it touches the bottom of the playfield.
+     * After 15 frames, it sets the 'active' flag to false.
+     */
     public void deactivateMino() {
-        if (bottomCollision == true) {
-            deactivateMinoCounter++;
+        if (bottomCollision) {
+            deactivateMinoCounter++; // Increment counter after bottom collision
         }
         if (deactivateMinoCounter == 15) {
-            active = false;
+            active = false; // Deactivate the mino after 15 frames
         }
     }
 
+    /**
+     * Checks for collisions with other existing minos in the playfield.
+     * Sets the appropriate flags for left, right, or bottom collision.
+     */
     public void checkExistedMinoCollision() {
-
         for (Block block : blocks) {
-            // for (Mino existedMino : PlayManager.minos)
             for (Block existedBlock : PlayManager.blocks) {
-                // If coordinate is larger than the game border, set right collision flag
                 if (block.x + Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
                     rightCollision = true;
                 }
-                // If coordinate touches game left border, means it has reached the end
                 if (block.x - Block.SIZE == existedBlock.x && block.y == existedBlock.y) {
                     leftCollision = true;
                 }
-                // If mino touches the bottom border, means it is time to die
                 if (block.y + Block.SIZE == existedBlock.y && block.x == existedBlock.x) {
                     bottomCollision = true;
-                    // counter++;
-
-                    // if (counter == 60) {
-                    // System.out.println(counter);
-                    // active = false;
-                    // counter = 0;
-                    // }
-                    // }
-                    // }
                 }
             }
         }
@@ -257,15 +232,15 @@ abstract public class Mino {
 
     /**
      * Checks for collisions with the left, right, and bottom edges of the
-     * playfield.
-     * Sets the appropriate flags (leftCollision, rightCollision, bottomCollision)
-     * based on the current position of the blocks.
+     * playfield when rotating the mino.
+     * Sets the appropriate flags based on the current position of the blocks.
      */
     public void checkRotateCollision() {
         leftCollision = false;
         rightCollision = false;
         bottomCollision = false;
 
+        // Check the rotation of the mino by examining tempBlocks
         for (Block block : tempBlocks) {
             if (block.x >= PlayManager.playfield_x + PlayManager.PLAYFIELD_WIDTH) {
                 rightCollision = true;
@@ -277,10 +252,6 @@ abstract public class Mino {
                 bottomCollision = true;
             }
         }
-    }
-
-    public void deleteRow() {
-
     }
 
     /**
