@@ -4,10 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.List;
 import java.awt.RenderingHints;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -91,8 +88,8 @@ public class PlayManager {
 
             minos.add(currentMino);
 
-            for (Block block : currentMino.blocks) {
-                blocks.add(block);
+            for (int i = 0; i < currentMino.blocks.length; i++) {
+                blocks.add(currentMino.blocks[i]);
             }
 
             if (currentMino.blocks[0].x == MINO_START_X && currentMino.blocks[0].y == MINO_START_Y) {
@@ -118,13 +115,16 @@ public class PlayManager {
 
         int count = 0;
 
-        Map<Block, Boolean> minoToDeleteIndex = new HashMap<>();
+        Map<String, Boolean> blocksToDelete = new HashMap<>();
+        LinkedList<Block> blocksToShift = new LinkedList<>();
 
         while (x < playfield_x + PLAYFIELD_WIDTH && y < playfield_y + PLAYFIELD_HEIGHT) {
 
-            for (Block block : blocks) {
-                if (block.x == x && block.y == y) {
-                    minoToDeleteIndex.put(block, true);
+            for (int i = 0; i < blocks.size(); i++) {
+                Block currentBlock = blocks.get(i);
+                if (currentBlock.x == x && currentBlock.y == y) {
+                    blocksToDelete.put(currentBlock.x + "-" + currentBlock.y, true);
+                    blocksToShift.add(currentBlock);
                     count++;
                     break;
                 }
@@ -134,10 +134,11 @@ public class PlayManager {
 
             if (x >= playfield_x + PLAYFIELD_WIDTH) {
                 if (count == 10) {
-                    System.out.println("Yayyy");
-                    deleteRow(minoToDeleteIndex);
-                    minoToDeleteIndex = new HashMap<>();
+
+                    deleteRow(blocksToDelete);
+                    shiftRowDown(blocksToShift);
                 }
+                blocksToDelete.clear();
                 x = playfield_x;
                 y += Block.SIZE;
                 count = 0;
@@ -147,19 +148,25 @@ public class PlayManager {
 
     }
 
-    public void deleteRow(Map<Block, Boolean> minoToDeleteIndex) {
-        // Sort the indices in descending order
+    public void deleteRow(Map<String, Boolean> blocksToDelete) {
 
-        // Iterate and remove blocks from the list
-        System.out.println("row");
-
-        System.out.println(minoToDeleteIndex.size());
         for (int i = 0; i < blocks.size(); i++) {
-
-            if (minoToDeleteIndex.get(blocks.get(i))) {
+            String id = blocks.get(i).x + "-" + blocks.get(i).y;
+            if (blocksToDelete.containsKey(id)) {
                 blocks.remove(i);
                 i--;
             }
+        }
+    }
+
+    public void shiftRowDown(LinkedList<Block> blocksToShift) {
+        // Remove the last 10 elements
+        for (int i = 0; i < 10; i++) {
+            blocksToShift.removeLast(); // Continuously removes the last element
+        }
+
+        for (Block block : blocksToShift) {
+            block.y += Block.SIZE;
         }
     }
 
@@ -236,10 +243,10 @@ public class PlayManager {
                 mino = new Mino_S(); // S-shaped mino
                 break;
             case 6:
-                mino = new Mino_T(); // T-shaped mino
+                mino = new Mino_O(); // Z-shaped mino (default case)
                 break;
             default:
-                mino = new Mino_O(); // Z-shaped mino (default case)
+                mino = new Mino_T(); // T-shaped mino
                 break;
         }
         return mino;
